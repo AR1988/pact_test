@@ -1,0 +1,148 @@
+package com.example.pact_test.pact;
+
+import au.com.dius.pact.consumer.dsl.DslPart;
+import au.com.dius.pact.consumer.dsl.PactDslJsonArray;
+import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
+import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
+import au.com.dius.pact.consumer.junit.PactProviderRule;
+import au.com.dius.pact.consumer.junit.PactVerification;
+import au.com.dius.pact.core.model.RequestResponsePact;
+import au.com.dius.pact.core.model.annotations.Pact;
+import com.example.pact_test.pact.consumer.PizzaClient;
+import com.example.pact_test.pact.model.Pizza;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class ConsumerPactTest {
+
+    @Autowired
+    private PizzaClient pizzaClient;
+
+    @Rule
+    public PactProviderRule mockProvider = new PactProviderRule("Pizza-Service", this);
+
+    @BeforeEach
+    public void initState() {
+        pizzaClient.resetStatusCode();
+    }
+
+    /**
+     * Contract Test between Provider and Consumer
+     */
+    @Pact(consumer = "FrontendApplication", provider = "Pizza-Service")
+    public RequestResponsePact createPactGetAll(PactDslWithProvider builder) {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json;charset=UTF-8");
+
+        DslPart bodyPizzasList = PactDslJsonArray
+                .arrayEachLike()
+                .stringType("name", "Pizza Salami")
+                .id("id", 1L)
+                .numberType("size", 8)
+                .decimalType("price", 9.99)
+
+                .eachLike("toppings")
+                .id("id", 10L)
+                .stringType("name", "Salami")
+                .stringType("pizza", "Pizza Salami")
+                .numberType("weight", 10)
+                .decimalType("price", 0.15)
+
+                .closeArray();
+
+        return builder
+                .given("get all pizzas")
+                .uponReceiving("get all pizzas")
+                .path("/pizzas")
+                .method("GET")
+                .willRespondWith()
+                .status(200)
+                .body(bodyPizzasList)
+                .toPact();
+    }
+
+    /**
+     * Contract Test between Provider and Consumer
+     */
+    @Pact(consumer = "FrontendApplication", provider = "Pizza-Service")
+    public RequestResponsePact createPactGetById1(PactDslWithProvider builder) {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json;charset=UTF-8");
+
+        PactDslJsonBody bodyPizzaById = new PactDslJsonBody();
+        bodyPizzaById
+                .stringType("name", "Pizza Bacon")
+                .valueFromProviderState("id", "${id}", 1)
+                .numberType("size", 11)
+                .decimalType("price", 8.99)
+
+                .eachLike("toppings")
+                .id("id", 22L)
+                .stringType("name", "Bacon")
+                .stringType("pizza", "Pizza Bacon")
+                .numberType("weight", 4)
+                .decimalType("price", 0.05)
+
+                .closeArray();
+
+        return builder
+                .given("get by ID 1 exist")
+                .uponReceiving("get pizza by ID 1")
+                .path("/pizzas/1")
+                .method("GET")
+                .willRespondWith()
+                .status(200)
+                .body(bodyPizzaById)
+                .toPact();
+    }
+
+    @Test
+    @PactVerification(value = "Pizza-Service", fragment = "createPactGetAll")
+    public void getPizzas() {
+        pizzaClient.setURL(mockProvider.getUrl() + "/pizzas");
+        Pizza[] pizzas = pizzaClient.getPizzas();
+
+        assertEquals(1, pizzas.length);
+        Pizza pizzaFromList = pizzas[0];
+        assertEquals("Pizza Salami", pizzaFromList.getName());
+        assertEquals(BigDecimal.valueOf(9.99), pizzaFromList.getPrice());
+        assertEquals(1L, pizzaFromList.getId());
+
+        assertEquals(1, pizzaFromList.getToppings().size());
+        assertEquals(10, pizzaFromList.getToppings().get(0).getId());
+    }
+
+    @Test
+    @PactVerification(value = "Pizza-Service", fragment = "createPactGetById1")
+    public void runGetPizzaById1_pizzaExist() {
+        pizzaClient.setURL(mockProvider.getUrl() + "/pizzas");
+
+        Pizza pizza = pizzaClient.getPizzaById(1);
+        HttpStatus httpStatus = pizzaClient.getStatus();
+
+        assertEquals(HttpStatus.OK, httpStatus);
+
+        assertNotNull(pizza);
+        assertEquals("Pizza Bacon", pizza.getName());
+        assertEquals(BigDecimal.valueOf(8.99), pizza.getPrice());
+        assertEquals(1L, pizza.getId());
+
+        assertEquals(1, pizza.getToppings().size());
+        assertEquals(22, pizza.getToppings().get(0).getId());
+    }
+}
