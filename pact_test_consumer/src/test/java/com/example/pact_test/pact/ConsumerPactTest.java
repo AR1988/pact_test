@@ -10,6 +10,7 @@ import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
 import com.example.pact_test.pact.consumer.PizzaClient;
 import com.example.pact_test.pact.model.Pizza;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,14 +21,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Slf4j
 public class ConsumerPactTest {
 
     @Autowired
@@ -42,12 +42,31 @@ public class ConsumerPactTest {
     }
 
     /**
-     * Contract Test between Provider and Consumer
+     * Contract Test between Provider and Consumer<br>
+     * get list of pizzas<br>
+     * <pre>
+     * json body like:
+     * [
+     *   {
+     *     "name": "Pizza Salami",
+     *     "id": 1,
+     *     "size": 8,
+     *     "price": 9.99,
+     *     "toopings": [
+     *       {
+     *         "name": "Salami",
+     *         "pizza": "Pizza Salami",
+     *         "weight": 10,
+     *         "price": 0.15,
+     *         "id": 10
+     *       }
+     *     ]
+     *   }
+     * ]
+     * </pre>
      */
     @Pact(consumer = "FrontendApplication", provider = "Pizza-Service")
     public RequestResponsePact createPactGetAll(PactDslWithProvider builder) {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json;charset=UTF-8");
 
         DslPart bodyPizzasList = PactDslJsonArray
                 .arrayEachLike()
@@ -65,6 +84,8 @@ public class ConsumerPactTest {
 
                 .closeArray();
 
+        log.info("List of pizzas, json body: " + bodyPizzasList);
+
         return builder
                 .given("get all pizzas")
                 .uponReceiving("get all pizzas")
@@ -77,17 +98,34 @@ public class ConsumerPactTest {
     }
 
     /**
-     * Contract Test between Provider and Consumer
+     * Contract Test between Provider and Consumer<br>
+     * get pizza by id 22
+     * <pre>
+     *     json body like:
+     *     {
+     *     "name": "Pizza Bacon",
+     *     "id": 22,
+     *     "size": 11,
+     *     "price": 8.99,
+     *     "toopings": [
+     *       {
+     *         "name": "Salami",
+     *         "pizza": "Pizza Salami",
+     *         "weight": 10,
+     *         "price": 0.15,
+     *         "id": 22
+     *       }
+     *     ]
+     *   }
+     * </pre>
      */
     @Pact(consumer = "FrontendApplication", provider = "Pizza-Service")
     public RequestResponsePact createPactGetById1(PactDslWithProvider builder) {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json;charset=UTF-8");
 
         PactDslJsonBody bodyPizzaById = new PactDslJsonBody();
         bodyPizzaById
                 .stringType("name", "Pizza Bacon")
-                .valueFromProviderState("id", "${id}", 1)
+                .id("id", 1L)
                 .numberType("size", 11)
                 .decimalType("price", 8.99)
 
@@ -99,6 +137,8 @@ public class ConsumerPactTest {
                 .decimalType("price", 0.05)
 
                 .closeArray();
+
+        log.info("Pizza with id 1, json body: " + bodyPizzaById);
 
         return builder
                 .given("get by ID 1 exist")
