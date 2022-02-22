@@ -4,7 +4,7 @@ import au.com.dius.pact.provider.junit.RestPactRunner;
 import au.com.dius.pact.provider.junit.target.HttpTarget;
 import au.com.dius.pact.provider.junitsupport.Provider;
 import au.com.dius.pact.provider.junitsupport.State;
-import au.com.dius.pact.provider.junitsupport.loader.PactFolder;
+import au.com.dius.pact.provider.junitsupport.loader.PactBroker;
 import au.com.dius.pact.provider.junitsupport.target.Target;
 import au.com.dius.pact.provider.junitsupport.target.TestTarget;
 import org.junit.runner.RunWith;
@@ -13,8 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 @RunWith(RestPactRunner.class)
 @Provider("Pizza-Service")
-//TODO replace this with PactBroker (docker)
-@PactFolder("pacts")
+@PactBroker(host = "localhost", port = "9292")
 public class ProviderPactTest {
 
     private final String API_HOST = "localhost";

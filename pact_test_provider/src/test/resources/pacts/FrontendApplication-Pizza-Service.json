@@ -267,15 +267,6 @@
               "combine": "AND"
             }
           }
-        },
-        "generators": {
-          "body": {
-            "$.id": {
-              "type": "ProviderState",
-              "expression": "${id}",
-              "dataType": "INTEGER"
-            }
-          }
         }
       },
       "providerStates": [
