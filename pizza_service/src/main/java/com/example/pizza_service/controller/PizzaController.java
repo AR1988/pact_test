@@ -8,6 +8,7 @@ import com.example.pizza_service.service.PizzaService;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,7 +41,7 @@ public class PizzaController {
         return new DisplayPizzaDto(pizza.getId(),
                 pizza.getName(),
                 pizza.getSize(),
-                pizza.getPrice(),
+                pizza.getPrice().setScale(2, RoundingMode.HALF_UP),
                 List.of(new ToppingDispalyDto(
                         22L, "Salamai", 5, BigDecimal.valueOf(.15), pizza.getName()
                 ))

@@ -12,8 +12,8 @@ import java.util.List;
 public class Pizza {
     private long id;
     private String name;
-    private BigDecimal price;
-    private Integer size;
+    private double price;
+    private int size;
     private List<Topping> toppings;
 
     /**

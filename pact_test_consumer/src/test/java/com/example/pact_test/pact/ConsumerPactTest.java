@@ -1,9 +1,6 @@
 package com.example.pact_test.pact;
 
-import au.com.dius.pact.consumer.dsl.DslPart;
-import au.com.dius.pact.consumer.dsl.PactDslJsonArray;
-import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
-import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
+import au.com.dius.pact.consumer.dsl.*;
 import au.com.dius.pact.consumer.junit.PactProviderRule;
 import au.com.dius.pact.consumer.junit.PactVerification;
 import au.com.dius.pact.core.model.RequestResponsePact;
@@ -13,17 +10,19 @@ import com.example.pact_test.pact.model.Pizza;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.RestTemplate;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -70,26 +69,25 @@ public class ConsumerPactTest {
 
         DslPart bodyPizzasList = PactDslJsonArray
                 .arrayEachLike()
-                .stringType("name", "Pizza Salami")
-                .id("id", 1L)
-                .numberType("size", 8)
-                .decimalType("price", 9.99)
-
-                .eachLike("toppings")
-                .id("id", 10L)
-                .stringType("name", "Salami")
-                .stringType("pizza", "Pizza Salami")
-                .numberType("weight", 10)
-                .decimalType("price", 0.15)
-
-                .closeArray();
+                            .id("id", 1L)
+                            .stringType("name", "Pizza Salami")
+                            .numberType("size", 8)
+                            .decimalType("price", 9.99)
+                                 .eachLike("toppings")
+                                        .id("id", 10L)
+                                        .stringType("name", "Salami")
+                                        .stringType("pizza", "Pizza Salami")
+                                        .numberType("weight", 10)
+                                        .decimalType("price", 0.15)
+                                .closeArray()
+                .closeObject();
 
         log.info("List of pizzas, json body: " + bodyPizzasList);
 
         return builder
                 .given("get all pizzas")
                 .uponReceiving("get all pizzas")
-                .path("/pizzas")
+                .path("/api/v1/pizzas")
                 .method("GET")
                 .willRespondWith()
                 .status(200)
@@ -143,7 +141,7 @@ public class ConsumerPactTest {
         return builder
                 .given("get by ID 1 exist")
                 .uponReceiving("get pizza by ID 1")
-                .path("/pizzas/1")
+                .path("/api/v1/pizzas/1")
                 .method("GET")
                 .willRespondWith()
                 .status(200)
@@ -154,13 +152,13 @@ public class ConsumerPactTest {
     @Test
     @PactVerification(value = "Pizza-Service", fragment = "createPactGetAll")
     public void getPizzas() {
-        pizzaClient.setURL(mockProvider.getUrl() + "/pizzas");
+        pizzaClient.setURL(mockProvider.getUrl() + "/api/v1//pizzas");
         Pizza[] pizzas = pizzaClient.getPizzas();
 
         assertEquals(1, pizzas.length);
         Pizza pizzaFromList = pizzas[0];
         assertEquals("Pizza Salami", pizzaFromList.getName());
-        assertEquals(BigDecimal.valueOf(9.99), pizzaFromList.getPrice());
+        assertEquals(9.99, pizzaFromList.getPrice());
         assertEquals(1L, pizzaFromList.getId());
 
         assertEquals(1, pizzaFromList.getToppings().size());
@@ -170,7 +168,7 @@ public class ConsumerPactTest {
     @Test
     @PactVerification(value = "Pizza-Service", fragment = "createPactGetById1")
     public void runGetPizzaById1_pizzaExist() {
-        pizzaClient.setURL(mockProvider.getUrl() + "/pizzas");
+        pizzaClient.setURL(mockProvider.getUrl() + "/api/v1//pizzas");
 
         Pizza pizza = pizzaClient.getPizzaById(1);
         HttpStatus httpStatus = pizzaClient.getStatus();
@@ -179,7 +177,7 @@ public class ConsumerPactTest {
 
         assertNotNull(pizza);
         assertEquals("Pizza Bacon", pizza.getName());
-        assertEquals(BigDecimal.valueOf(8.99), pizza.getPrice());
+        assertEquals(8.99, pizza.getPrice());
         assertEquals(1L, pizza.getId());
 
         assertEquals(1, pizza.getToppings().size());

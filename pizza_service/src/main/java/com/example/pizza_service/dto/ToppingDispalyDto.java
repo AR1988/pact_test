@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Data
 public class ToppingDispalyDto {
-    public Long id;
+    public long id;
     public String name;
     public int weight;
     public BigDecimal price;

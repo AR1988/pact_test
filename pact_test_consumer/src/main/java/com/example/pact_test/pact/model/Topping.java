@@ -9,9 +9,9 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 public class Topping {
-    private Long id;
+    private long id;
     private String name;
     private String pizza;
-    private BigDecimal price;
+    private double price;
     private int weight;
 }

@@ -15,7 +15,7 @@ import java.util.List;
 public class DisplayPizzaDto {
     private long id;
     private String name;
-    private Integer size;
+    private int size;
     private BigDecimal price;
     List<ToppingDispalyDto> toppings;
 }
