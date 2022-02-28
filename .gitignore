@@ -34,3 +34,4 @@ build/
 
 ### docker ###
 /db-postgres/
+/provider/reports/
