@@ -1,16 +1,25 @@
-1. run Pact broker container
-````shell
-docker-compose up
-````
-2. Configure pact
+[comment]: <> (1. run Pact broker container)
 
-> Info: [Building JSON bodies with PactDslJsonBody DSL](https://github.com/pact-foundation/pact-jvm/tree/master/consumer#dsl-usage)
+[comment]: <> (````shell)
 
-Pact located at `ConsumerPactTest` `consumer/src/test/java/com/example/consumer/pact/ConsumerPactTest.java`
+[comment]: <> (docker-compose up)
 
-4. Publish pact
-````shell
-cd ./consumer
-./mvnw pact:publish
-````
-3. Run provider test (src/test/java/com/example/provider/ProviderPactTest.java)
+[comment]: <> (````)
+
+[comment]: <> (2. Configure pact)
+
+[comment]: <> (> Info: [Building JSON bodies with PactDslJsonBody DSL]&#40;https://github.com/pact-foundation/pact-jvm/tree/master/consumer#dsl-usage&#41;)
+
+[comment]: <> (Pact located at `ConsumerPactTest` `consumer/src/test/java/com/example/consumer/pact/ConsumerPactTest.java`)
+
+[comment]: <> (4. Publish pact)
+
+[comment]: <> (````shell)
+
+[comment]: <> (cd ./consumer)
+
+[comment]: <> (./mvnw pact:publish)
+
+[comment]: <> (````)
+
+[comment]: <> (3. Run provider test &#40;src/test/java/com/example/provider/ProviderPactTest.java&#41;)
