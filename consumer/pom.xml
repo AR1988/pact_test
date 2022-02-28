@@ -64,8 +64,14 @@
                 <artifactId>maven</artifactId>
                 <version>4.1.11</version>
                 <configuration>
-                    <pactDirectory>target/pacts</pactDirectory> <!-- Defaults to ${project.build.directory}/pacts -->
-                    <pactBrokerUrl>http://localhost:9292</pactBrokerUrl>
+                    <pacticipantVersion>0.0.0.1</pacticipantVersion>
+                    <pacticipant>Pizza-Service</pacticipant>
+
+                    <serviceProviders>Pizza-Service</serviceProviders>
+
+                    <pactDirectory>target/pacts</pactDirectory>
+                    <pactBrokerUrl>https://disc.pactflow.io:443</pactBrokerUrl>
+                    <projectVersion>0.0.0.1</projectVersion>
                     <tags>
                         <tag>master</tag>
                     </tags>
