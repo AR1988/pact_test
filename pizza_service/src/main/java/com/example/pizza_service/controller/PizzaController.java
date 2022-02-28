@@ -1,6 +1,5 @@
 package com.example.pizza_service.controller;
 
-import com.example.pizza_service.dto.AddPizzaDto;
 import com.example.pizza_service.dto.DisplayPizzaDto;
 import com.example.pizza_service.dto.ToppingDispalyDto;
 import com.example.pizza_service.model.Pizza;
@@ -23,7 +22,7 @@ public class PizzaController {
     }
 
     @PostMapping()
-    public Pizza add(@RequestBody AddPizzaDto pizza) {
+    public Pizza add(@RequestBody Pizza pizza) {
         return pizzaService.add(pizza.getName(), pizza.getPrice(), pizza.getSize());
     }
 
@@ -43,7 +42,7 @@ public class PizzaController {
                 pizza.getSize(),
                 pizza.getPrice().setScale(2, RoundingMode.HALF_UP),
                 List.of(new ToppingDispalyDto(
-                        22L, "Salamai", 5, BigDecimal.valueOf(.15), pizza.getName()
+                        22L, "Salamai", 5, BigDecimal.valueOf(.15), pizza.getId()
                 ))
         );
     }

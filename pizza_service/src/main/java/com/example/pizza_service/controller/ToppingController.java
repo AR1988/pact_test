@@ -38,6 +38,6 @@ public class ToppingController {
                 topping.getName(),
                 topping.getWeight(),
                 topping.getPrice(),
-                topping.getPizza().getName());
+                topping.getPizza().getId());
     }
 }

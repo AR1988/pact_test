@@ -14,5 +14,5 @@ public class ToppingDispalyDto {
     public String name;
     public int weight;
     public BigDecimal price;
-    public String pizza;
+    public Long pizzaId;
 }
