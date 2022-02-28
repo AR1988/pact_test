@@ -31,4 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
-/pact_test_consumer/db-postgres/
+
+### docker ###
+/db-postgres/
