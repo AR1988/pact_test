@@ -1,17 +1,19 @@
 package com.example.provider;
 
-import au.com.dius.pact.provider.junit.RestPactRunner;
 import au.com.dius.pact.provider.junit.target.HttpTarget;
 import au.com.dius.pact.provider.junitsupport.Provider;
 import au.com.dius.pact.provider.junitsupport.State;
 import au.com.dius.pact.provider.junitsupport.loader.PactBroker;
 import au.com.dius.pact.provider.junitsupport.target.Target;
 import au.com.dius.pact.provider.junitsupport.target.TestTarget;
+import au.com.dius.pact.provider.spring.SpringRestPactRunner;
 import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
 
-@RunWith(RestPactRunner.class)
+@RunWith(SpringRestPactRunner.class)
+@SpringBootTest
 @Provider("Pizza-Service")
-@PactBroker(host = "localhost", port = "9292", tags = "master")
+@PactBroker
 public class ProviderPactTest {
 
     private final String API_HOST = "localhost";

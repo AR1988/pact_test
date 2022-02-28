@@ -1,0 +1,4 @@
+pactbroker:
+  url: https://disc.pactflow.io:443
+  auth:
+    token: <token>
